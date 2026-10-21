@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    # 코드 체크아웃
+    # 코드 체크아웃(가져오기)
     - name: Checkout repository
       uses: actions/checkout@v2
 
@@ -43,7 +43,7 @@ jobs:
 
     - name: Add known_hosts
       run: |
-        ssh-keyscan -t ed25519 15.164.165.237 >> ~/.ssh/known_hosts
+        ssh-keyscan -t ed25519 3.107.31.238 >> ~/.ssh/known_hosts
 
     #- name: 기존프로세스 종료
     #  run: |
@@ -51,12 +51,12 @@ jobs:
 
     - name: Deploy to Server with rsync
       run: | 
-         rsync -avz -e "ssh -o StrictHostKeyChecking=no" build/libs/*.jar ubuntu@15.164.165.237:~/app
+         rsync -avz -e "ssh -o StrictHostKeyChecking=no" build/libs/*.jar ubuntu@3.107.31.238:~/app
 
 
     - name: Run SSH commands
       run: |
-        ssh -i ~/.ssh/id_ed25519 ubuntu@15.164.165.237 << 'EOF'
+        ssh -i ~/.ssh/id_ed25519 ubuntu@3.107.31.238 << 'EOF'
           pkill -f 'java -jar' || true
           nohup java -jar ~/app/devops_01-0.0.1-SNAPSHOT.jar > log.txt 2>&1 &
         EOF
