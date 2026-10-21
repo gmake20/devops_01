@@ -5,6 +5,9 @@ on:
     branches:
       - main  # main 브랜치에 푸시될 때 트리거
 
+env:
+  SERVER_IP: 3.107.31.238
+  
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -43,7 +46,7 @@ jobs:
 
     - name: Add known_hosts
       run: |
-        ssh-keyscan -t ed25519 3.107.31.238 >> ~/.ssh/known_hosts
+        ssh-keyscan -t ed25519 "$SERVER_IP" >> ~/.ssh/known_hosts
 
     #- name: 기존프로세스 종료
     #  run: |
@@ -51,12 +54,12 @@ jobs:
 
     - name: Deploy to Server with rsync
       run: | 
-         rsync -avz -e "ssh -o StrictHostKeyChecking=no" build/libs/*.jar ubuntu@3.107.31.238:~/app
+         rsync -avz -e "ssh -o StrictHostKeyChecking=no" build/libs/*.jar ubuntu@$SERVER_IP:~/app
 
 
     - name: Run SSH commands
       run: |
-        ssh -i ~/.ssh/id_ed25519 ubuntu@3.107.31.238 << 'EOF'
+        ssh -i ~/.ssh/id_ed25519 ubuntu@$SERVER_IP << 'EOF'
           pkill -f 'java -jar' || true
           nohup java -jar ~/app/devops_01-0.0.1-SNAPSHOT.jar > log.txt 2>&1 &
         EOF
